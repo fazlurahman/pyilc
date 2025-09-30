@@ -29,12 +29,12 @@ BEAM_TYPES = ['Gaussians','1DBeams']
 
 ##########################
 # component types implemented thus far
-COMP_TYPES = ['CMB','kSZ','tSZ','rSZ','mu','CIB', 'CIB_dbeta','CIB_dT','radio','radio_dbeta','radio2']
+COMP_TYPES = ['CMB','thermdust','kSZ','tSZ','rSZ','mu','CIB', 'CIB_dbeta','CIB_dT','radio','radio_dbeta','radio2']
 ##########################
 
 ##########################
 # SED parameter types implemented thus far (that can be varied)
-PARAM_TYPES = ['kT_e_keV','beta_CIB','Tdust_CIB']
+PARAM_TYPES = ['kT_e_keV','beta_CIB','Tdust_CIB','beta_dust','Tdust']
 ##########################
 
 ##########################
