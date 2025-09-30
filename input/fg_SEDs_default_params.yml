@@ -1,8 +1,8 @@
 Tdust_CIB: 24.0       #CIB effective dust temperature [K] (Table 9 of http://www.aanda.org/articles/aa/pdf/2014/11/aa22093-13.pdf)
 beta_CIB: 1.2         #CIB modified blackbody spectral index (Table 9 of http://www.aanda.org/articles/aa/pdf/2014/11/aa22093-13.pdf ; Table 10 of that paper contains CIB monopoles)
 nu0_CIB_ghz: 353.0    #CIB pivot frequency [GHz]
-Tdust: 19.4           #CIB effective dust temperature [K] (Table 9 of http://www.aanda.org/articles/aa/pdf/2014/11/aa22093-13.pdf)
-beta_dust: 1.6        #CIB modified blackbody spectral index (Table 9 of http://www.aanda.org/articles/aa/pdf/2014/11/aa22093-13.pdf ; Table 10 of that paper contains CIB monopoles)
+Tdust: 19.4           #CIB effective dust temperature [K] (Table 1 of https://www.aanda.org/articles/aa/full_html/2016/12/aa29022-16/aa29022-16.html)
+beta_dust: 1.6        #CIB modified blackbody spectral index (Table 1 of https://www.aanda.org/articles/aa/full_html/2016/12/aa29022-16/aa29022-16.html)
 nu0_dust_ghz: 545.0   #CIB pivot frequency [GHz]
 kT_e_keV: 5.0         #electron temperature for relativistic SZ evaluation [keV] (for reference, 5 keV is rough temperature for a 3x10^14 Msun/h cluster at z=0 (e.g., Arnaud+2005))
 nu0_radio_ghz: 150.0  #radio pivot frequency [GHz]
