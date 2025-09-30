@@ -69,6 +69,7 @@ default_dict = read_param_dict_from_yaml(fpath+'/../input/fg_SEDs_default_params
 ######################################
 def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
             dust_beta_param_name='beta_CIB',
+            thermdust_beta_param_name='beta_dust',
             radio_beta_param_name='beta_radio',
             radio_beta1_param_name='beta1_radio',
             radio_beta2_param_name='beta2_radio',
@@ -121,6 +122,18 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         Y3=7.5+313.125*Xtwid-1419.6*Xtwid**2.0+1425.3*Xtwid**3.0-531.257142857*Xtwid**4.0+86.1357142857*Xtwid**5.0-6.09523809524*Xtwid**6.0+0.15238095238*Xtwid**7.0+Stwid**2.0*(-709.8+2850.6*Xtwid-2921.91428571*Xtwid**2.0+1119.76428571*Xtwid**3.0-173.714285714*Xtwid**4.0+9.14285714286*Xtwid**5.0)+Stwid**4.0*(-531.257142857+732.153571429*Xtwid-274.285714286*Xtwid**2.0+29.2571428571*Xtwid**3.0)+Stwid**6.0*(-25.9047619048+9.44761904762*Xtwid)
         # leave out non-rel. tSZ, as we only want the rel. terms here
         resp = (Y1*kTe+Y2*kTe**2.+Y3*kTe**3.) * TCMB_uK #put explicitly into uK_CMB units, analogous to non-rel. tSZ above
+        resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
+        return resp
+    elif (comp == 'thermdust'):
+        # Thermal dust = modified blackbody here
+        # Thermal dust SED parameter choices in dict file: Tdust [K], beta_dust, nu0_dust [GHz]
+        # N.B. overall amplitude is not meaningful here; output ILC map (if you tried to preserve this component) would not be in sensible units
+        p = _setp()
+        nu = 1.e9*np.asarray(nu_ghz).astype(float)
+        X_dust = hplanck*nu/(kboltz*(p['Tdust']))
+        nu0_dust = p['nu0_dust_ghz']*1.e9
+        X0_dust = hplanck*nu0_dust/(kboltz*(p['Tdust']))
+        resp = (nu/nu0_dust)**(3.0+(p[thermdust_beta_param_name])) * ((np.exp(X0_dust) - 1.0) / (np.exp(X_dust) - 1.0)) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_dust_ghz']))
         resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
         return resp
     elif (comp == 'CIB'):
