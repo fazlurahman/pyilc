@@ -68,7 +68,7 @@ default_dict = read_param_dict_from_yaml(fpath+'/../input/fg_SEDs_default_params
 # nu_ghz can contain entries that are None, which correspond to maps that have no CMB-relevant (or CIB) signals in them (e.g., HI maps)
 ######################################
 def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
-            dust_beta_param_name='beta_CIB',
+            cib_beta_param_name='beta_CIB',
             thermdust_beta_param_name='beta_dust',
             radio_beta_param_name='beta_radio',
             radio_beta1_param_name='beta1_radio',
@@ -145,7 +145,7 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = (nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0)) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
+        resp = (nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0)) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
         resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
         return resp
     elif (comp == 'CIB_Jysr'): #same as CIB above but in 1e-26 Jy/sr (with arbitrary overall amplitude!) instead of uK_CMB
@@ -156,7 +156,7 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = (nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0))
+        resp = (nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0))
         resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
         return resp
     elif (comp =='CIB_dT'):
@@ -168,8 +168,8 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = hplanck * (nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((-np.exp(X_CIB)*nu+(nu-nu0_CIB)*np.exp(X_CIB)*np.exp(X0_CIB)+nu0_CIB*np.exp(X0_CIB)) / (np.exp(X_CIB) - 1.0)**2 * kboltz * p['Tdust_CIB'] **2 ) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
-        resp = (nu/nu0_CIB)**(4.0+p[dust_beta_param_name]) * (-np.exp(-X0_CIB/2)+np.exp(X0_CIB/2))**2/ (-np.exp(-X_CIB/2)+np.exp(X_CIB/2))**2 * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
+        resp = hplanck * (nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((-np.exp(X_CIB)*nu+(nu-nu0_CIB)*np.exp(X_CIB)*np.exp(X0_CIB)+nu0_CIB*np.exp(X0_CIB)) / (np.exp(X_CIB) - 1.0)**2 * kboltz * p['Tdust_CIB'] **2 ) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
+        resp = (nu/nu0_CIB)**(4.0+p[cib_beta_param_name]) * (-np.exp(-X0_CIB/2)+np.exp(X0_CIB/2))**2/ (-np.exp(-X_CIB/2)+np.exp(X_CIB/2))**2 * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
         resp[np.where(nu_ghz == None)] = 0.
         return resp
     elif (comp =='CIB_Jysr_dT'): #same as CIB_dT above but in 1e-26 Jy/sr (with arbitrary overall amplitude!) instead of uK_CMB
@@ -180,8 +180,8 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = hplanck * (nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((-np.exp(X_CIB)*nu+(nu-nu0_CIB)*np.exp(X_CIB)*np.exp(X0_CIB)+nu0_CIB*np.exp(X0_CIB)) / (np.exp(X_CIB) - 1.0)**2 * kboltz * p['Tdust_CIB'] **2 ) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
-        resp = (nu/nu0_CIB)**(4.0+p[dust_beta_param_name]) * (-np.exp(-X0_CIB/2)+np.exp(X0_CIB/2))**2/ (-np.exp(-X_CIB/2)+np.exp(X_CIB/2))**2 
+        resp = hplanck * (nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((-np.exp(X_CIB)*nu+(nu-nu0_CIB)*np.exp(X_CIB)*np.exp(X0_CIB)+nu0_CIB*np.exp(X0_CIB)) / (np.exp(X_CIB) - 1.0)**2 * kboltz * p['Tdust_CIB'] **2 ) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
+        resp = (nu/nu0_CIB)**(4.0+p[cib_beta_param_name]) * (-np.exp(-X0_CIB/2)+np.exp(X0_CIB/2))**2/ (-np.exp(-X_CIB/2)+np.exp(X_CIB/2))**2 
         resp[np.where(nu_ghz == None)] = 0.
         return resp
     elif (comp =='CIB_dbeta'):
@@ -193,7 +193,7 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = np.log(nu/nu0_CIB)*(nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0)) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
+        resp = np.log(nu/nu0_CIB)*(nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0)) * (ItoDeltaT(np.asarray(nu_ghz).astype(float))/ItoDeltaT(p['nu0_CIB_ghz']))
         resp[np.where(nu_ghz == None)] = 0.
         return resp
     elif (comp == 'CIB_Jysr_dbeta'): #same as CIB_dbeta above but in 1e-26 Jy/sr (with arbitrary overall amplitude!) instead of uK_CMB
@@ -204,7 +204,7 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
         X_CIB = hplanck*nu/(kboltz*(p['Tdust_CIB']))
         nu0_CIB = p['nu0_CIB_ghz']*1.e9
         X0_CIB = hplanck*nu0_CIB/(kboltz*(p['Tdust_CIB']))
-        resp = np.log(nu/nu0_CIB)*(nu/nu0_CIB)**(3.0+(p[dust_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0))
+        resp = np.log(nu/nu0_CIB)*(nu/nu0_CIB)**(3.0+(p[cib_beta_param_name])) * ((np.exp(X0_CIB) - 1.0) / (np.exp(X_CIB) - 1.0))
         resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
         return resp
     elif (comp == 'radio'):
@@ -341,7 +341,8 @@ def get_mix(nu_ghz, comp, param_dict_file=None, param_dict_override=None,
 def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                        ccor_cen_nus=None, ccor_beams=None, ccor_exps = None, 
                        normalize_cib=False,param_dict_override=None,bandpass_exps=None,nus_ghz=None,btrans=None,            
-                       dust_beta_param_name='beta_CIB',
+                       cib_beta_param_name='beta_CIB',
+                       thermdust_beta_param_name='beta_dust',
                        radio_beta_param_name='beta_radio',
                        radio_beta1_param_name='beta1_radio',
                        radio_beta2_param_name='beta2_radio',
@@ -489,9 +490,28 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                     # -- N.B. IMPORTANT TYPO IN THEIR EQ. 35 -- see https://www.aanda.org/articles/aa/pdf/2014/11/aa21531-13.pdf
                     mixs = get_mix(nu_ghz, comp, 
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
                     val = np.trapz(trans * dBnudT(nu_ghz) * bnus * mixs, nu_ghz) / np.trapz(trans * dBnudT(nu_ghz), nu_ghz) / lbeam
                     # this is the response at each frequency channel in uK_CMB for a signal with y=1 (or mu=1)
+                elif (comp == 'thermdust'):
+                    # following Sec. 3.2 of https://arxiv.org/pdf/1303.5070.pdf 
+                    # -- N.B. IMPORTANT TYPO IN THEIR EQ. 35 -- see https://www.aanda.org/articles/aa/pdf/2014/11/aa21531-13.pdf
+                    # CIB SED parameter choices in dict file: Tdust_CIB [K], beta_CIB, nu0_CIB [GHz]
+                    # N.B. overall amplitude is not meaningful here; output ILC map (if you tried to preserve this component) would not be in sensible units
+                    mixs = get_mix(nu_ghz, comp, 
+                                   param_dict_file=param_dict_file, param_dict_override=param_dict_override,
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
+
+                    vnorm = np.trapz(trans * dBnudT(nu_ghz), nu_ghz)
+                    val = (np.trapz(trans * mixs * bnus , nu_ghz) / vnorm) / lbeam
+                    # N.B. this expression follows from Eqs. 32 and 35 of 
+                    # https://www.aanda.org/articles/aa/pdf/2014/11/aa21531-13.pdf , 
+                    # and then noting that one also needs to first rescale the CIB emission 
+                    # in Jy/sr from nu0_CIB to the "nominal frequency" nu_c that appears in 
+                    # those equations (i.e., multiply by get_mix(nu_c, 'CIB_Jysr')).  
+                    # The resulting cancellation leaves this simple expression which has no dependence on nu_c.
                 elif (comp == 'CIB'):
                     # following Sec. 3.2 of https://arxiv.org/pdf/1303.5070.pdf 
                     # -- N.B. IMPORTANT TYPO IN THEIR EQ. 35 -- see https://www.aanda.org/articles/aa/pdf/2014/11/aa21531-13.pdf
@@ -499,7 +519,8 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                     # N.B. overall amplitude is not meaningful here; output ILC map (if you tried to preserve this component) would not be in sensible units
                     mixs = get_mix(nu_ghz, 'CIB_Jysr', 
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
 
                     vnorm = np.trapz(trans * dBnudT(nu_ghz), nu_ghz)
                     val = (np.trapz(trans * mixs * bnus , nu_ghz) / vnorm) / lbeam
@@ -516,7 +537,8 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                     # N.B. overall amplitude is not meaningful here; output ILC map (if you tried to preserve this component) would not be in sensible units
                     mixs = get_mix(nu_ghz, 'CIB_Jysr_dbeta',
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
 
                     vnorm = np.trapz(trans * dBnudT(nu_ghz), nu_ghz)
                     val = (np.trapz(trans * mixs * bnus , nu_ghz) / vnorm) / lbeam
@@ -527,7 +549,8 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                     # N.B. overall amplitude is not meaningful here; output ILC map (if you tried to preserve this component) would not be in sensible units
                     mixs = get_mix(nu_ghz, 'CIB_Jysr_dT',
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
 
                     vnorm = np.trapz(trans * dBnudT(nu_ghz), nu_ghz)
                     val = (np.trapz(trans * mixs * bnus , nu_ghz) / vnorm) / lbeam
@@ -537,7 +560,8 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
 
                     mixs = get_mix(nu_ghz, 'radio_Jysr', 
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name)
 
                     val = (np.trapz(trans * mixs * bnus , nu_ghz) / np.trapz(trans * dBnudT(nu_ghz), nu_ghz)) / lbeam
                 elif (comp == 'radio2'):
@@ -546,7 +570,8 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
 
                     mixs = get_mix(nu_ghz, 'radio2_Jysr',
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name,
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,
+                                   radio_beta_param_name=radio_beta_param_name,
                                    radio_beta1_param_name=radio_beta1_param_name,radio_beta2_param_name=radio_beta2_param_name
                                    
                                    )
@@ -556,7 +581,7 @@ def get_mix_bandpassed(bp_list, comp, param_dict_file=None,bandpass_shifts=None,
                 elif (comp == 'radio_dbeta'):
                     mixs = get_mix(nu_ghz, 'radio_dbeta_Jysr',
                                    param_dict_file=param_dict_file, param_dict_override=param_dict_override,
-                                   dust_beta_param_name=dust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
+                                   cib_beta_param_name=cib_beta_param_name,thermdust_beta_param_name=thermdust_beta_param_name,radio_beta_param_name=radio_beta_param_name)
 
                     val = (np.trapz(trans * mixs * bnus , nu_ghz) / np.trapz(trans * dBnudT(nu_ghz), nu_ghz)) / lbeam
                 else:
