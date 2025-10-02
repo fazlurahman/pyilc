@@ -441,7 +441,9 @@ class scale_info(object):
                             if (info.bandpass_type == 'DeltaBandpasses'):
                                 # N.B. get_mix and get_mix_bandpassed assume the input maps are in uK_CMB, i.e., responses are computed in uK_CMB, but we are assuming in this code that all maps are in K_CMB, hence factor of 1.e-6 below
                                 # However, note that as a consequence an output NILC CMB map from this code has units of uK_CMB!
-                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',
+                                    thermdust_beta_param_name='beta_dust',
+                                     radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                             elif (info.bandpass_type == 'ActualBandpasses'):
@@ -454,17 +456,17 @@ class scale_info(object):
                                     get_delta_bandpass = False
                                 if get_delta_bandpass:
 
-                                    A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                                 else:
 
-                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                         else:
                             if (info.bandpass_type == 'DeltaBandpasses'):
-                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                             elif (info.bandpass_type == 'ActualBandpasses'):
@@ -476,11 +478,11 @@ class scale_info(object):
                                 else:
                                     get_delta_bandpass = False
                                 if get_delta_bandpass:
-                                    A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                                 else:
-                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'))[0] #convert to K from uK
                     countt += 1
@@ -1731,7 +1733,10 @@ def harmonic_ILC(wv=None, info=None, resp_tol=1.e-3, map_images=False):
     freqs_to_use = np.full((wv.N_scales,info.N_freqs), False)
     N_freqs_to_use = np.zeros(wv.N_scales,dtype=int)
     N_side_to_use = np.ones(wv.N_scales,dtype=int)*info.N_side #initialize all of the internal, per-scale N_side values to the output N_side
-    pix_size_to_use = np.ones(wv.N_scales)*info.pix_size #initialize all of the internal, per-scale pix-size values to the output pix-size
+    if info.work_in_healpix:
+        pix_size_to_use= None
+    else:
+        pix_size_to_use = np.ones(wv.N_scales)*info.pix_size #initialize all of the internal, per-scale pix-size values to the output pix-size
     ell_F = np.zeros(wv.N_scales)
     ell_B = np.zeros(info.N_freqs)
     for i in range(wv.N_scales-1):
@@ -1761,14 +1766,15 @@ def harmonic_ILC(wv=None, info=None, resp_tol=1.e-3, map_images=False):
             if (ell_F[i] < 2**j):
                 N_side_to_use[i] = int(2**j)
                 break
-        pix_size_to_use[i] = np.pi/ell_F[i] * (180*60/np.pi)
-        if (N_side_to_use[i] > info.N_side):
-            N_side_to_use[i] = info.N_side
-        if pix_size_to_use[i] > info.pix_size:
-            pix_size_to_use[i] = info.pix_size
+        if not info.work_in_healpix:
+            pix_size_to_use[i] = np.pi/ell_F[i] * (180*60/np.pi)
+            if (N_side_to_use[i] > info.N_side):
+                N_side_to_use[i] = info.N_side
+            if pix_size_to_use[i] > info.pix_size:
+                pix_size_to_use[i] = info.pix_size
     N_pix_to_use = 12*(N_side_to_use)**2
     ##########################
-    self.ell_F = ell_F
+    #self.ell_F = ell_F
     ##########################
     # criterion to determine the real-space gaussian FWHM used in wavelet ILC
     # based on ILC bias mode-counting
@@ -1831,21 +1837,21 @@ def harmonic_ILC(wv=None, info=None, resp_tol=1.e-3, map_images=False):
                             if (info.bandpass_type == 'DeltaBandpasses'):
                                 # N.B. get_mix and get_mix_bandpassed assume the input maps are in uK_CMB, i.e., responses are computed in uK_CMB, but we are assuming in this code that all maps are in K_CMB, hence factor of 1.e-6 below
                                 # However, note that as a consequence an output NILC CMB map from this code has units of uK_CMB!
-                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'
 
                                     ))[0] #convert to K from uK
                             elif (info.bandpass_type == 'ActualBandpasses'):
                                 if info.freq_bp_files[a] is not None:
-                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'
 ))[0] #convert to K from uK
                                 else:
                                     print("getting none amix",flush=True)
                                 
-                                    A_mix[countt][b] = 1.e-6 * (get_mix([None], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                    A_mix[countt][b] = 1.e-6 * (get_mix([None], info.ILC_preserved_comp, param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'
 
@@ -1853,14 +1859,14 @@ def harmonic_ILC(wv=None, info=None, resp_tol=1.e-3, map_images=False):
 
                         else:
                             if (info.bandpass_type == 'DeltaBandpasses'):
-                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                A_mix[countt][b] = 1.e-6 * (get_mix([info.freqs_delta_ghz[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'
 
                                     ))[0] #convert to K from uK
                             elif (info.bandpass_type == 'ActualBandpasses'):
-                                A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, dust_beta_param_name='beta_CIB', radio_beta_param_name='beta_radio',
+                                A_mix[countt][b] = 1.e-6 * (get_mix_bandpassed([info.freq_bp_files[a]], ILC_deproj_comps[b-1], param_dict_file=info.param_dict_file, param_dict_override=None, cib_beta_param_name='beta_CIB',thermdust_beta_param_name='beta_dust', radio_beta_param_name='beta_radio',
                                     
                                     radio_beta1_param_name='beta1_radio',
                                     radio_beta2_param_name='beta2_radio'
